@@ -1,7 +1,7 @@
 import asyncio
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import CommandStart, Command
-from aiogram.types import Message
+from aiogram.types import Message, FSInputFile
 from dotenv import load_dotenv
 import os
 
@@ -12,6 +12,15 @@ import random
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
+
+@dp.message(Command('video'))
+async def video(message: Message):
+    video = FSInputFile('021426.mp4')
+    await bot.send_video(message.chat.id, video)
+
+@dp.message(Command('audio'))
+async def audio(message: Message):
+    await message.answer('Этот бот умеет выполнять команды: \n /start \n /help \n /photo')
 
 # @dp.message(Command('photo', prefix='&'))
 @dp.message(Command('photo'))
@@ -34,7 +43,7 @@ async def aitext(message: Message):
 
 @dp.message(Command('help'))
 async def help(message: Message):
-    await message.answer('Этот бот умеет выполнять команды: \n /start \n /help \n /photo')
+    await message.answer('Этот бот умеет выполнять команды: \n /start \n /help \n /photo \n /video \n /audio')
 
 @dp.message(CommandStart())
 async def start(message: Message):
