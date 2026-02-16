@@ -13,6 +13,7 @@ import random
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
+# @dp.message(Command('photo', prefix='&'))
 @dp.message(Command('photo'))
 async def photo(message: Message):
     list = ['https://img.freepik.com/premium-photo/picture-supercar-speeding-wallpaper_670382-69999.jpg?semt=ais_hybrid ', 'https://i.pinimg.com/originals/60/24/40/6024403726666384d2599d5990b72247.jpg?nii=t ', 'https://img.freepik.com/free-photo/futuristic-supercar_23-2151955591.jpg?semt=ais_hybrid&w=740&q=80 ']
@@ -24,6 +25,7 @@ async def react_photo(message: Message):
     list = ['Ого какая фотка!', 'Непонятно, что это такое?', 'Не отправляйте мне такое больше фото!']
     rand_answ = random.choice(list)
     await message.answer(rand_answ)
+    await bot.download(message.photo[-1], destination=f'tmp/{message.photo[-1].file_id}.jpg')
 
 
 @dp.message(F.text == 'Что такое ИИ?')
@@ -44,9 +46,15 @@ async def start(message: Message):
 # async def start(message: Message):
 #     await message.answer('Я не понимаю это сообщение.')
 
+# @dp.message()
+# async def echo(message: Message):
+#     await message.send_copy(chat_id=message.chat.id)
+
 @dp.message()
 async def echo(message: Message):
-    await message.send_copy(chat_id=message.chat.id)
+    if message.text.lower() == 'тест':
+        await message.answer('Тест пройден!')
+
 
 async def main():
     await  dp.start_polling(bot)
