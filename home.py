@@ -53,7 +53,6 @@ async def help_command(message: Message):
 async def start(message: Message):
     await message.answer('Привет! Я бот.')
 
-
 @dp.message(Command('pogoda'))
 async def pogoda(message: Message):
     args = message.text.split(' ', 1)
@@ -87,6 +86,10 @@ async def pogoda(message: Message):
         await message.answer("⏰ Время ожидания ответа от сервера истекло. Попробуйте позже.")
     except Exception as e:
         await message.answer(f"🔧 Произошла ошибка: {str(e)}")
+
+@dp.message()
+async def echo(message: Message):
+    await message.send_copy(chat_id=message.chat.id)
 
 
 async def main():

@@ -34,13 +34,19 @@ async def aitext(message: Message):
 async def help(message: Message):
     await message.answer('Этот бот умеет выполнять команды: \n /start \n /help \n /photo')
 
-@dp.message(CommandStart)
+@dp.message(CommandStart())
 async def start(message: Message):
-    await message.answer('Привет! Я бот.')
+    await message.answer(f'Привет, {message.from_user.first_name}')
+    # await message.answer(f'Привет, {message.from_user.full_name}')
+    # await message.answer('Привет! Я бот.')
+
+# @dp.message()
+# async def start(message: Message):
+#     await message.answer('Я не понимаю это сообщение.')
 
 @dp.message()
-async def start(message: Message):
-    await message.answer('Я тебе ответил.')
+async def echo(message: Message):
+    await message.send_copy(chat_id=message.chat.id)
 
 async def main():
     await  dp.start_polling(bot)
