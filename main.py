@@ -15,12 +15,14 @@ dp = Dispatcher()
 
 @dp.message(Command('video'))
 async def video(message: Message):
+    await bot.send_chat_action(message.chat.id, 'upload_video')
     video = FSInputFile('021426.mp4')
     await bot.send_video(message.chat.id, video)
 
 @dp.message(Command('audio'))
 async def audio(message: Message):
-    await message.answer('Этот бот умеет выполнять команды: \n /start \n /help \n /photo')
+    audio = FSInputFile('Alan_Walker.mp3')
+    await bot.send_audio(message.chat.id, audio)
 
 # @dp.message(Command('photo', prefix='&'))
 @dp.message(Command('photo'))
