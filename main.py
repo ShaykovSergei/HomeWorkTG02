@@ -3,12 +3,15 @@ from aiogram import Bot, Dispatcher, F
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message, FSInputFile
 from dotenv import load_dotenv
+import random
 import os
+
+from gtts import gTTS
 
 load_dotenv()
 TOKEN = os.getenv('TOKEN')
 
-import random
+
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
@@ -19,10 +22,36 @@ async def video(message: Message):
     video = FSInputFile('021426.mp4')
     await bot.send_video(message.chat.id, video)
 
+@dp.message(Command('voice'))
+async def voice(message: Message):
+    voice = FSInputFile('zvuk.mp3')
+    await message.answer_voice(voice)
+
+@dp.message(Command('doc'))
+async def doc(message: Message):
+    doc = FSInputFile('Prompt.pdf')
+    await bot.send_document(message.chat.id, doc)
+
 @dp.message(Command('audio'))
 async def audio(message: Message):
     audio = FSInputFile('Alan_Walker.mp3')
     await bot.send_audio(message.chat.id, audio)
+
+@dp.message(Command('training'))
+async def training(message: Message):
+    training_list = [
+        "Тренировка 1:\\n1. Скручивания: 3 подхода по 15 повторений\\n2. Велосипед: 3 подхода по 20 повторений (каждая сторона)\\n3. Планка: 3 подхода по 30 секунд",
+        "Тренировка 2:\\n1. Подъемы ног: 3 подхода по 15 повторений\\n2. Русский твист: 3 подхода по 20 повторений (каждая сторона)\\n3. Планка с поднятой ногой: 3 подхода по 20 секунд (каждая нога)",
+        "Тренировка 3:\\n1. Скручивания с поднятыми ногами: 3 подхода по 15 повторений\\n2. Горизонтальные ножницы: 3 подхода по 20 повторений\\n3. Боковая планка: 3 подхода по 20 секунд (каждая сторона)"
+    ]
+    rand_training = random.choice(training_list)
+    await message.answer(f"Это ваша тренировка на сегодня {rand_training} ")
+
+    tts = gTTS(text=rand_training, lang='ru')
+    tts.save('training.ogg')
+    audio = FSInputFile('training.ogg')
+    await bot.send_voice(message.chat.id, audio)
+    os.remove('training.ogg')
 
 # @dp.message(Command('photo', prefix='&'))
 @dp.message(Command('photo'))
