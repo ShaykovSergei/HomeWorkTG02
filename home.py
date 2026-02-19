@@ -7,12 +7,17 @@ import random
 import os
 
 from gtts import gTTS
+from translate import Translator
 
 load_dotenv()
 TOKEN = os.getenv('TOKEN')
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
+
+# Создаем папку img, если она не существует
+if not os.path.exists('img'):
+    os.makedirs('img')
 
 @dp.message(Command('video'))
 async def video(message: Message):
@@ -62,7 +67,7 @@ async def react_photo(message: Message):
     list = ['Ого какая фотка!', 'Непонятно, что это такое?', 'Не отправляйте мне такое больше фото!']
     rand_answ = random.choice(list)
     await message.answer(rand_answ)
-    await bot.download(message.photo[-1], destination=f'tmp/{message.photo[-1].file_id}.jpg')
+    await bot.download(message.photo[-1], destination=f'img/{message.photo[-1].file_id}.jpg')
 
 @dp.message(F.text == 'Что такое ИИ?')
 async def aitext(message: Message):
@@ -70,7 +75,7 @@ async def aitext(message: Message):
 
 @dp.message(Command('help'))
 async def help(message: Message):
-    await message.answer('Этот бот умеет выполнять команды: \n /start \n /help \n /photo \n /video \n /audio')
+    await message.answer('Этот бот умеет выполнять команды: \n /start \n /help \n /photo \n /video \n /audio \n /voice \n /doc \n /training')
 
 @dp.message(CommandStart())
 async def start(message: Message):
@@ -80,10 +85,20 @@ async def start(message: Message):
 async def echo(message: Message):
     if message.text.lower() == 'тест':
         await message.answer('Тест пройден!')
+    else:
+        translator = Translator(to_lang="en")
+        translation = translator.translate(message.text)
+        await message.answer(f'Перевод на английский: {translation}')
 
+        # Отправка голосового сообщения с переводом
+        tts = gTTS(text=translation, lang='en')
+        tts.save('translation.ogg')
+        audio = FSInputFile('translation.ogg')
+        await bot.send_voice(message.chat.id, audio)
+        os.remove('translation.ogg')
 
 async def main():
-    await  dp.start_polling(bot)
+    await dp.start_polling(bot)
 
 if __name__ == '__main__':
     asyncio.run(main())
